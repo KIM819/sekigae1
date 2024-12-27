@@ -68,7 +68,7 @@ function updateSubmittedList() {
 confirmButton.addEventListener('click', () => {
     handleConflicts();
     displayFinalSeats();
-    markUnselectedSeats();
+    markConfirmedSeats(); // 確定した席を赤文字にする
 });
 
 // 重複のある席番号を解決
@@ -139,14 +139,14 @@ function displayFinalSeats() {
     resultDiv.classList.remove('hidden');
 }
 
-// 未選択の席を赤い文字にする
-function markUnselectedSeats() {
+// 確定した席を赤い文字にする
+function markConfirmedSeats() {
     document.querySelectorAll('.seat').forEach(seat => {
         const seatNumber = parseInt(seat.dataset.seat, 10);
-        if (!finalSeats[seatNumber]) {
-            seat.classList.add('unselected-text');
+        if (finalSeats[seatNumber]) {
+            seat.classList.add('confirmed-text');
         } else {
-            seat.classList.remove('unselected-text');
+            seat.classList.remove('confirmed-text');
         }
     });
 }
