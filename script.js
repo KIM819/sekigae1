@@ -3,7 +3,6 @@ const studentInput = document.getElementById('studentNumber');
 const seatInput = document.getElementById('seatNumber');
 const submittedList = document.getElementById('submittedList');
 const confirmButton = document.getElementById('confirmButton');
-const displayButton = document.getElementById('displayButton'); // 表示ボタン
 const resultDiv = document.getElementById('result');
 const resultContent = document.getElementById('resultContent');
 const form = document.getElementById('seatForm');
@@ -11,7 +10,6 @@ const form = document.getElementById('seatForm');
 const studentData = {}; // 各出席番号が希望する席番号
 const finalSeats = {}; // 最終確定した席
 let currentStudentNumber = 1; // 現在の出席番号
-let isDisplayingNumbers = false; // 表示/非表示の状態
 
 // 初期化
 function initialize() {
@@ -73,27 +71,10 @@ confirmButton.addEventListener('click', () => {
     markConfirmedSeats(); // 確定した席を赤文字にする
 });
 
-// 表示/非表示ボタンを押したときの動作
+// 表示ボタンを押したときの動作
 displayButton.addEventListener('click', () => {
-    isDisplayingNumbers = !isDisplayingNumbers; // 表示状態を切り替え
-    toggleSeatDisplay();
-    updateDisplayButtonText();
+    replaceSeatNumbersWithStudentNumbers();
 });
-
-// 確定した席番号を出席番号に切り替え、または戻す
-function toggleSeatDisplay() {
-    document.querySelectorAll('.seat').forEach(seat => {
-        const seatNumber = parseInt(seat.dataset.seat, 10);
-        if (finalSeats[seatNumber]) {
-            seat.textContent = isDisplayingNumbers ? finalSeats[seatNumber] : seatNumber; // 出席番号または席番号を表示
-        }
-    });
-}
-
-// 表示ボタンのテキストを更新
-function updateDisplayButtonText() {
-    displayButton.textContent = isDisplayingNumbers ? "非表示" : "表示";
-}
 
 // 重複のある席番号を解決
 function handleConflicts() {
@@ -109,8 +90,49 @@ function handleConflicts() {
     for (const [student, seat] of Object.entries(studentData)) {
         if (seatCounts[seat] === 1) {
             finalSeats[seat] = student; // 被りなしは確定
+        } else {
+            if (!conflicts[seat]) {
+                conflicts[seat] = [];
+            }
+            conflicts[seat].push(student);
         }
     }
+
+    // 被りのある席を表示
+    resultContent.innerHTML = '';
+    for (const [seat, students] of Object.entries(conflicts)) {
+        const conflictDiv = document.createElement('div');
+        conflictDiv.innerHTML = `
+            <p>席番号${seat}に希望した出席番号: ${students.join(', ')}</p>
+            <button onclick="resolveConflict(${seat}, [${students.join(',')}])" class="resolve-btn">手動で解決</button>
+        `;
+        resultContent.appendChild(conflictDiv);
+    }
+
+    if (Object.keys(conflicts).length > 0) {
+        resultDiv.classList.remove('hidden');
+    }
+}
+
+// 手動で解決
+function resolveConflict(seat, students) {
+    const selectedStudent = prompt(`席番号${seat}を確定させる出席番号を入力してください (${students.join(', ')}):`);
+    if (!students.includes(Number(selectedStudent))) {
+        alert('無効な入力です。');
+        return;
+    }
+
+    finalSeats[seat] = Number(selectedStudent);
+
+    // 残りの学生を未割り当てに戻す
+    students.forEach(student => {
+        if (student !== Number(selectedStudent)) {
+            delete studentData[student];
+        }
+    });
+
+    updateSubmittedList();
+    handleConflicts(); // 再確認
 }
 
 // 確定された席と出席番号を表示
@@ -133,7 +155,17 @@ function markConfirmedSeats() {
         }
     });
 }
-
+// 確定した席番号を出席番号に置き換え
+function replaceSeatNumbersWithStudentNumbers() {
+    document.querySelectorAll('.seat').forEach(seat => {
+        const seatNumber = parseInt(seat.dataset.seat, 10);
+        if (finalSeats[seatNumber]) {
+            seat.textContent = finalSeats[seatNumber]; // 席番号を出席番号に置き換え
+       
+            seat.classList.add('displayed'); // 表示済みスタイルを適用
+        }
+    });
+}
 // 初期化
 initialize();
 
