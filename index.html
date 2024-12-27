@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>席替えシステム</title>
-  <link rel="stylesheet" href="./style.css"/>
+    <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
     <div class="container">
         <h1>席替えシステム</h1>
 
-        <!-- ホワイトボード -->
+         <!-- ホワイトボード -->
         <div class="seating-container">
             <div class="whiteboard">ホワイトボード</div>
             <div class="seating-grid">
@@ -91,23 +91,19 @@
         <!-- 入力済みリスト -->
         <div id="submittedList" class="submitted-list"></div>
 
-        <!-- 確定ボタン -->
-        <button id="confirmButton" class="confirm-btn">確定</button>
+        <!-- 確定/表示ボタン -->
+        <div class="controls">
+            <button id="toggleButton" class="displayButton">表示</button>
+        </div>
 
         <!-- 結果 -->
         <div id="result" class="hidden">
             <h2>結果</h2>
             <div id="resultContent"></div>
         </div>
-       <div class="controls">
-    <button id="confirmButton">確定</button>
-    <button id="displayButton">表示</button>
-</div>
-
-
-
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
+
