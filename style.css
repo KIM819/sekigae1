@@ -111,10 +111,11 @@ button {
     z-index: 2; /* 最前面に表示 */
 }
 
-.seat.unselected-text {
-    color: red; /* 赤い文字 */
+.seat.confirmed-text {
+    color: red; /* 確定した席の赤い文字 */
     font-weight: bold;
 }
+
 
 
 .empty-space {
