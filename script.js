@@ -5,6 +5,7 @@ const confirmButton = document.getElementById('confirmButton');
 const displayButton = document.getElementById('displayButton');
 const resultDiv = document.getElementById('result');
 const resultContent = document.getElementById('resultContent');
+const toggleContainer = document.getElementById('toggleContainer');
 const form = document.getElementById('seatForm');
 
 const studentData = {}; // 出席番号と席番号のマッピング
@@ -71,6 +72,11 @@ confirmButton.addEventListener('click', () => {
     resolveConflicts();
     displayConfirmedSeats();
     toggleDisplay(false); // 非表示モードに戻す
+
+    // 表示/非表示ボタンを表示
+    if (Object.keys(finalSeats).length === 39) {
+        toggleContainer.classList.remove('hidden');
+    }
 });
 
 // 表示/非表示ボタンのクリック
