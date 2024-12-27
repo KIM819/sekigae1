@@ -121,7 +121,7 @@ button {
     color: black; /* 表示後のスタイル（黒文字） */
 }
 
-#displayButton {
+.displayButton {
     background-color: green; /* 緑色のボタン */
     color: white;
     border: none;
@@ -132,7 +132,7 @@ button {
     border-radius: 5px;
 }
 
-#displayButton:hover {
+.displayButton:hover {
     background-color: darkgreen;
 }
 
