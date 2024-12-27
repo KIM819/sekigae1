@@ -11,6 +11,7 @@ const form = document.getElementById('seatForm');
 const studentData = {}; // 各出席番号が希望する席番号
 const finalSeats = {}; // 最終確定した席
 let currentStudentNumber = 1; // 現在の出席番号
+let isDisplayingNumbers = false; // 表示/非表示の状態
 
 // 初期化
 function initialize() {
@@ -72,10 +73,27 @@ confirmButton.addEventListener('click', () => {
     markConfirmedSeats(); // 確定した席を赤文字にする
 });
 
-// 表示ボタンを押したときの動作
+// 表示/非表示ボタンを押したときの動作
 displayButton.addEventListener('click', () => {
-    replaceSeatNumbersWithStudentNumbers();
+    isDisplayingNumbers = !isDisplayingNumbers; // 表示状態を切り替え
+    toggleSeatDisplay();
+    updateDisplayButtonText();
 });
+
+// 確定した席番号を出席番号に切り替え、または戻す
+function toggleSeatDisplay() {
+    document.querySelectorAll('.seat').forEach(seat => {
+        const seatNumber = parseInt(seat.dataset.seat, 10);
+        if (finalSeats[seatNumber]) {
+            seat.textContent = isDisplayingNumbers ? finalSeats[seatNumber] : seatNumber; // 出席番号または席番号を表示
+        }
+    });
+}
+
+// 表示ボタンのテキストを更新
+function updateDisplayButtonText() {
+    displayButton.textContent = isDisplayingNumbers ? "非表示" : "表示";
+}
 
 // 重複のある席番号を解決
 function handleConflicts() {
@@ -116,18 +134,7 @@ function markConfirmedSeats() {
     });
 }
 
-// 確定した席番号を出席番号に置き換え
-function replaceSeatNumbersWithStudentNumbers() {
-    document.querySelectorAll('.seat').forEach(seat => {
-        const seatNumber = parseInt(seat.dataset.seat, 10);
-        if (finalSeats[seatNumber]) {
-            seat.textContent = finalSeats[seatNumber]; // 席番号を出席番号に置き換え
-            seat.classList.remove('confirmed-text'); // 赤文字を解除
-            seat.classList.add('displayed'); // 表示済みスタイルを適用
-        }
-    });
-}
-
 // 初期化
 initialize();
+
 
