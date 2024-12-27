@@ -18,6 +18,18 @@ function initialize() {
 }
 
 // 座席選択のハンドラ
+seatingGrid.addEventListener('mouseover', (event) => {
+    if (event.target.classList.contains('seat')) {
+        event.target.classList.add('hovered');
+    }
+});
+
+seatingGrid.addEventListener('mouseout', (event) => {
+    if (event.target.classList.contains('seat')) {
+        event.target.classList.remove('hovered');
+    }
+});
+
 seatingGrid.addEventListener('click', (event) => {
     const seatElement = event.target;
 
@@ -57,7 +69,7 @@ form.addEventListener('submit', (event) => {
 // 確定ボタンのクリック
 confirmButton.addEventListener('click', () => {
     resolveConflicts();
-    markConfirmedSeats();
+    displayConfirmedSeats();
     toggleDisplay(false); // 非表示モードに戻す
 });
 
@@ -68,14 +80,13 @@ displayButton.addEventListener('click', () => {
     displayButton.textContent = isDisplayingNumbers ? "非表示" : "表示";
 });
 
-// 確定した席の処理
-function markConfirmedSeats() {
-    document.querySelectorAll('.seat').forEach(seat => {
-        const seatNumber = parseInt(seat.dataset.seat, 10);
-        if (finalSeats[seatNumber]) {
-            seat.classList.add('confirmed-text');
-        }
+// 確定した席の表示
+function displayConfirmedSeats() {
+    resultContent.innerHTML = '';
+    Object.entries(finalSeats).forEach(([seat, student]) => {
+        resultContent.innerHTML += `<p>席番号${seat}は出席番号${student}で確定</p>`;
     });
+    resultDiv.classList.remove('hidden');
 }
 
 // 表示/非表示の切り替え
@@ -102,11 +113,26 @@ function resolveConflicts() {
         if (seatCounts[seat] === 1) {
             finalSeats[seat] = parseInt(student, 10);
         } else {
-            resultContent.innerHTML += `<p>席番号${seat}が衝突しています: 出席番号 ${student}</p>`;
+            // 衝突解決
+            resultContent.innerHTML += `
+                <p>席番号${seat}が衝突しています: 出席番号${student}</p>
+                <button onclick="manualResolve(${seat})" class="resolve-btn">手動で解決</button>
+            `;
         }
     });
 
     resultDiv.classList.remove('hidden');
+}
+
+// 手動で衝突解決
+function manualResolve(seat) {
+    const student = prompt(`席番号${seat}を確定させる出席番号を入力してください:`);
+    if (student && !isNaN(student)) {
+        finalSeats[seat] = parseInt(student, 10);
+        displayConfirmedSeats();
+    } else {
+        alert('無効な入力です。');
+    }
 }
 
 // 初期化
