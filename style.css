@@ -123,7 +123,7 @@ button {
 
 .displayButton {
     background-color: green; /* 緑色のボタン */
-    color: white;
+    color: green;
     border: none;
     padding: 10px;
     margin-top: 10px;
