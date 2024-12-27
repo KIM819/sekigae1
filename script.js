@@ -155,16 +155,26 @@ function markConfirmedSeats() {
         }
     });
 }
-// 確定した席番号を出席番号に置き換え
-function replaceSeatNumbersWithStudentNumbers() {
+// 表示/非表示ボタンを押したときの動作
+displayButton.addEventListener('click', () => {
+    isDisplayingNumbers = !isDisplayingNumbers; // 表示状態を切り替え
+    toggleSeatDisplay();
+    updateDisplayButtonText();
+});
+
+// 確定した席番号を出席番号に切り替え、または戻す
+function toggleSeatDisplay() {
     document.querySelectorAll('.seat').forEach(seat => {
         const seatNumber = parseInt(seat.dataset.seat, 10);
         if (finalSeats[seatNumber]) {
-            seat.textContent = finalSeats[seatNumber]; // 席番号を出席番号に置き換え
-       
-            seat.classList.add('displayed'); // 表示済みスタイルを適用
+            seat.textContent = isDisplayingNumbers ? finalSeats[seatNumber] : seatNumber; // 出席番号または席番号を表示
         }
     });
+}
+
+// 表示ボタンのテキストを更新
+function updateDisplayButtonText() {
+    displayButton.textContent = isDisplayingNumbers ? "非表示" : "表示";
 }
 // 初期化
 initialize();
