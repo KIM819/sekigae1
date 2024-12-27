@@ -137,4 +137,3 @@ function manualResolve(seat) {
 
 // 初期化
 initialize();
-
