@@ -116,6 +116,27 @@ button {
     font-weight: bold;
 }
 
+.seat.displayed {
+    font-weight: bold;
+    color: black; /* 表示後のスタイル（黒文字） */
+}
+
+#displayButton {
+    background-color: green; /* 緑色のボタン */
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+#displayButton:hover {
+    background-color: darkgreen;
+}
+
+
 
 
 .empty-space {
