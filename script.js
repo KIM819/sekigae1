@@ -126,9 +126,21 @@ function resolveConflicts() {
 
 // 手動で衝突解決
 function manualResolve(seat) {
-    const student = prompt(`席番号${seat}を確定させる出席番号を入力してください:`);
-    if (student && !isNaN(student)) {
-        finalSeats[seat] = parseInt(student, 10);
+    const conflictingStudents = Object.entries(studentData)
+        .filter(([student, s]) => s === seat)
+        .map(([student]) => student);
+
+    const selectedStudent = prompt(`席番号${seat}を確定させる出席番号を入力してください (${conflictingStudents.join(', ')}):`);
+    if (conflictingStudents.includes(selectedStudent)) {
+        finalSeats[seat] = parseInt(selectedStudent, 10);
+
+        // 衝突していた他の出席番号をリセット
+        conflictingStudents.forEach(student => {
+            if (student !== selectedStudent) {
+                delete studentData[student];
+            }
+        });
+
         displayConfirmedSeats();
     } else {
         alert('無効な入力です。');
