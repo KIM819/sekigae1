@@ -71,6 +71,7 @@ form.addEventListener('submit', (event) => {
 confirmButton.addEventListener('click', () => {
     resolveConflicts();
     displayConfirmedSeats();
+    markConfirmedSeats();
     toggleDisplay(false); // 非表示モードに戻す
 
     // 表示/非表示ボタンを表示
@@ -85,6 +86,16 @@ displayButton.addEventListener('click', () => {
     toggleDisplay(isDisplayingNumbers);
     displayButton.textContent = isDisplayingNumbers ? "非表示" : "表示";
 });
+
+// 確定した席を赤く表示
+function markConfirmedSeats() {
+    document.querySelectorAll('.seat').forEach(seat => {
+        const seatNumber = parseInt(seat.dataset.seat, 10);
+        if (finalSeats[seatNumber]) {
+            seat.classList.add('confirmed-text');
+        }
+    });
+}
 
 // 確定した席の表示
 function displayConfirmedSeats() {
@@ -148,6 +159,7 @@ function manualResolve(seat) {
         });
 
         displayConfirmedSeats();
+        markConfirmedSeats();
     } else {
         alert('無効な入力です。');
     }
@@ -155,3 +167,4 @@ function manualResolve(seat) {
 
 // 初期化
 initialize();
+
