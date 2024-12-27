@@ -3,6 +3,7 @@ const studentInput = document.getElementById('studentNumber');
 const seatInput = document.getElementById('seatNumber');
 const submittedList = document.getElementById('submittedList');
 const confirmButton = document.getElementById('confirmButton');
+const displayButton = document.getElementById('displayButton'); // 表示ボタン
 const resultDiv = document.getElementById('result');
 const resultContent = document.getElementById('resultContent');
 const form = document.getElementById('seatForm');
@@ -71,6 +72,11 @@ confirmButton.addEventListener('click', () => {
     markConfirmedSeats(); // 確定した席を赤文字にする
 });
 
+// 表示ボタンを押したときの動作
+displayButton.addEventListener('click', () => {
+    replaceSeatNumbersWithStudentNumbers();
+});
+
 // 重複のある席番号を解決
 function handleConflicts() {
     const seatCounts = {}; // 席ごとの希望人数
@@ -85,49 +91,8 @@ function handleConflicts() {
     for (const [student, seat] of Object.entries(studentData)) {
         if (seatCounts[seat] === 1) {
             finalSeats[seat] = student; // 被りなしは確定
-        } else {
-            if (!conflicts[seat]) {
-                conflicts[seat] = [];
-            }
-            conflicts[seat].push(student);
         }
     }
-
-    // 被りのある席を表示
-    resultContent.innerHTML = '';
-    for (const [seat, students] of Object.entries(conflicts)) {
-        const conflictDiv = document.createElement('div');
-        conflictDiv.innerHTML = `
-            <p>席番号${seat}に希望した出席番号: ${students.join(', ')}</p>
-            <button onclick="resolveConflict(${seat}, [${students.join(',')}])" class="resolve-btn">手動で解決</button>
-        `;
-        resultContent.appendChild(conflictDiv);
-    }
-
-    if (Object.keys(conflicts).length > 0) {
-        resultDiv.classList.remove('hidden');
-    }
-}
-
-// 手動で解決
-function resolveConflict(seat, students) {
-    const selectedStudent = prompt(`席番号${seat}を確定させる出席番号を入力してください (${students.join(', ')}):`);
-    if (!students.includes(Number(selectedStudent))) {
-        alert('無効な入力です。');
-        return;
-    }
-
-    finalSeats[seat] = Number(selectedStudent);
-
-    // 残りの学生を未割り当てに戻す
-    students.forEach(student => {
-        if (student !== Number(selectedStudent)) {
-            delete studentData[student];
-        }
-    });
-
-    updateSubmittedList();
-    handleConflicts(); // 再確認
 }
 
 // 確定された席と出席番号を表示
@@ -151,5 +116,18 @@ function markConfirmedSeats() {
     });
 }
 
+// 確定した席番号を出席番号に置き換え
+function replaceSeatNumbersWithStudentNumbers() {
+    document.querySelectorAll('.seat').forEach(seat => {
+        const seatNumber = parseInt(seat.dataset.seat, 10);
+        if (finalSeats[seatNumber]) {
+            seat.textContent = finalSeats[seatNumber]; // 席番号を出席番号に置き換え
+            seat.classList.remove('confirmed-text'); // 赤文字を解除
+            seat.classList.add('displayed'); // 表示済みスタイルを適用
+        }
+    });
+}
+
 // 初期化
 initialize();
+
